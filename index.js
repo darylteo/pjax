@@ -204,7 +204,18 @@ Pjax.prototype = {
       options.analytics()
 
       // Scroll page to top on new page load
-      if (options.scrollTo !== false) {
+      // First parse url and check for hash to override scroll
+      var url = require('./lib/parse-url.js')(href)
+      if (url.hash) {
+        var name = url.hash.slice(1)
+        name = decodeURIComponent(name)
+
+        var target = document.getElementById(name) || document.getElementsByName(name)[0]
+        if(target) {
+          var offset = require('./lib/proto/offset.js')(target);
+          window.scrollTo(0, offset.top);
+        }
+      } else if (options.scrollTo !== false) {
         if (options.scrollTo.length > 1) {
           window.scrollTo(options.scrollTo[0], options.scrollTo[1])
         }
